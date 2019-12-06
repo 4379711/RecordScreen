@@ -1,0 +1,11 @@
+dist/*
+*.egg-info/*
+.idea/*
+*.bak
+build/*
+test*
+logs/*
+*.log
+*.txt
+__pycache__/*
+*/__pycache__/*
