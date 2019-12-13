@@ -2,8 +2,8 @@
 # @Time    : 2019/12/2 10:55
 # @Author  : Liu Yalong
 # @File    : __init__.py.py
-import os
-import configparser
+from os.path import exists
+from configparser import ConfigParser
 from utils import *
 import logging
 
@@ -15,8 +15,11 @@ def set_config(cls):
             yield str(k), str(v)
 
 
+BASE_DIR = 'D:\\RecordVideo\\'
+
+
 class BaseConfig:
-    config_file_name = 'config.ini'
+    config_file_name = BASE_DIR + 'config.ini'
     encoding = 'gbk'
 
 
@@ -34,7 +37,7 @@ class LogConfig:
 
 class CmdConfig:
     # 文件目录
-    video_file_dir = 'videos'
+    video_file_dir = BASE_DIR + 'videos'
 
     # 线程数
     thread_num = 4
@@ -47,13 +50,13 @@ class CmdConfig:
     video_codec = 'h264_qsv'
 
     # 分辨率
-    resolution = '1920x1080'
+    resolution = '1024x768'
 
     # 帧率
-    frame_rate = '7.0'
+    frame_rate = '6.0'
 
     # 文件格式
-    video_type = '.mp4'
+    video_type = '.ts'
 
     # 缓存大小
     rtbufsize = '500M'
@@ -70,6 +73,9 @@ class CmdConfig:
     # 硬件解码
     hwaccel_qsv = 1
 
+    # 码率
+    bit_rate = '400k'
+
 
 class RecordConfig(BaseConfig):
     def __init__(self):
@@ -78,8 +84,8 @@ class RecordConfig(BaseConfig):
 
     def load(self):
 
-        if os.path.exists(self.config_file_name):
-            self.config = configparser.ConfigParser()
+        if exists(self.config_file_name):
+            self.config = ConfigParser()
             self.config.read(self.config_file_name, encoding=self.encoding)
         else:
             self.write_default_config()
@@ -88,7 +94,7 @@ class RecordConfig(BaseConfig):
     def write_default_config(self):
 
         pprint('初始化配置文件.')
-        conf = configparser.ConfigParser()
+        conf = ConfigParser()
 
         log_section_name = 'LOG'
         conf.add_section(log_section_name)
@@ -113,8 +119,6 @@ class RecordConfig(BaseConfig):
 
 
 def logger_():
-    logger = logging.getLogger(__name__)
-
     if LogConfig.log_level.upper() == 'WARNING':
         tmp_level = logging.WARNING
     elif LogConfig.log_level.upper() == 'ERROR':
@@ -123,14 +127,32 @@ def logger_():
         tmp_level = logging.DEBUG
     else:
         tmp_level = logging.INFO
-    logger.setLevel(level=tmp_level)
-    handler = logging.FileHandler(LogConfig.log_name)
-    handler.setLevel(logging.INFO)
-    formatter = logging.Formatter(LogConfig.log_format_, datefmt=LogConfig.log_date_fmt_)
-    handler.setFormatter(formatter)
+    logging.basicConfig(
+        filename=BASE_DIR + LogConfig.log_name,
+        format=LogConfig.log_format_,
+        datefmt=LogConfig.log_date_fmt_,
+        level=tmp_level
 
-    logger.addHandler(handler)
-    return logger
+    )
+    return logging
+    # logger = logging.getLogger(__name__)
+    # if not logger.handlers:
+    #
+    #     if LogConfig.log_level.upper() == 'WARNING':
+    #         tmp_level = logging.WARNING
+    #     elif LogConfig.log_level.upper() == 'ERROR':
+    #         tmp_level = logging.ERROR
+    #     elif LogConfig.log_level.upper() == 'DEBUG':
+    #         tmp_level = logging.DEBUG
+    #     else:
+    #         tmp_level = logging.INFO
+    #     logger.setLevel(level=tmp_level)
+    #     handler = logging.FileHandler(LogConfig.log_name)
+    #     handler.setLevel(logging.INFO)
+    #     formatter = logging.Formatter(LogConfig.log_format_, datefmt=LogConfig.log_date_fmt_)
+    #     handler.setFormatter(formatter)
+    #
+    # return logger
 
 
 if __name__ == '__main__':

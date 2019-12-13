@@ -5,7 +5,7 @@
 from PyInstaller.__main__ import run
 
 if __name__ == '__main__':
-    # opts = ['run.py', '-D', '-w', '-i=ico.ico']
-    opts = ['RecordVideo.py', '-F']
-    # opts = ['test2.py', '-F']
+    # opts = ['tuopan.py', '-D', '-w', '-i' 'ico.ico']
+    # opts = ['tuopan.py', '-F',]
+    opts = ['tuopan.py', '-D', '-w']
     run(opts)
